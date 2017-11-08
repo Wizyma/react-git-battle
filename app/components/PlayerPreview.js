@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function PLayerPreview(props){
+function PLayerPreview({ avatar, username, children }){
   return(
     <div>
       <div className='column'>
         <img
           className='avatar'
-          src={props.avatar}
-          alt={`Avatar for ${props.username}`} />
+          src={avatar}
+          alt={`Avatar for ${username}`} />
         <h2 className='username'>
-          @{props.username}
+          @{username}
         </h2>
-        {props.children}
+        {children}
       </div>
     </div>
   )

@@ -9,23 +9,15 @@ class PlayerInput extends React.Component{
     this.state = {
       username: ''
     }
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event){
-    let value = event.target.value;
-
-    this.setState(() => {
-      return {
-        username: value
-      }
-    })
+  handleChange = (event) => {
+    const value = event.target.value;
+    this.setState({ username: value })
   }
 
-  handleSubmit(event){
-    event.preventDefault(); //to not submit to a server
+  handleSubmit = (event) =>{
+    event.preventDefault(); // to not submit to a server
 
     this.props.onSubmit(
       this.props.id,
@@ -33,25 +25,27 @@ class PlayerInput extends React.Component{
     )
   }
 
-  render(){
+  render() {
+    const { username } = this.state;
+    const { label } = this.props;
     return(
       <form className='column' onSubmit={this.handleSubmit}>
         <label className='header' htmlFor='username'>
-          {this.props.label}
+          {label}
         </label>
         <input
           id='username'
           placeholder='github username'
           autoComplete='off'
           type='text'
-          value={this.state.username}
+          value={username}
           onChange={this.handleChange} />
 
           <button
             className='button'
             type='submit'
-            style={this.state.username ? {cursor: 'pointer'} : null}
-            disabled={!this.state.username}>
+            style={username ? {cursor: 'pointer'} : null}
+            disabled={!username}>
             Submit
           </button>
       </form>
@@ -75,35 +69,26 @@ class Battle extends React.Component {
       playerOneImage: null,
       playerTwoImage: null
     }
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleReset = this.handleReset.bind(this);
   }
 
-  handleSubmit(id, username){
-    let newState = {};
-    this.setState(() => {
-      newState[`${id}Name`] = username;
-      newState[`${id}Image`] = `https://github.com/${username}.png?size=200`;
-      return newState;
-    })
+  handleSubmit = (id, username) => {
+    this.setState(() => ({
+      [`${id}Name`]: username,
+      [`${id}Image`]: `https://github.com/${username}.png?size=200`
+    }))
   }
 
-  handleReset(id){
+  handleReset = (id) => {
     let newState = {};
-    this.setState(() => {
-      newState[`${id}Name`] = '';
-      newState[`${id}Image`] = null;
-      return newState;
-    })
+    this.setState(() => ({
+      [`${id}Name`]: '',
+      [`${id}Image`]: null
+    }))
   }
 
   render(){
-    let match = this.props.match;
-    let playerOneName = this.state.playerOneName;
-    let playerTwoName = this.state.playerTwoName;
-    let playerOneImage = this.state.playerOneImage;
-    let playerTwoImage = this.state.playerTwoImage;
+    const { match } = this.props;
+    const { playerOneName, playerTwoName, playerOneImage, playerTwoImage }  = this.state;
 
     return(
       <div>
@@ -123,7 +108,7 @@ class Battle extends React.Component {
             >
               <button
                 className='reset'
-                onClick={this.handleReset.bind(null, 'playerOne')}>
+                onClick={() => this.handleReset('playerOne')}>
                 Reset
               </button>
             </PLayerPreview>}
@@ -142,7 +127,7 @@ class Battle extends React.Component {
             >
               <button
                 className='reset'
-                onClick={this.handleReset.bind(null, 'playerTwo')}>
+                onClick={() => this.handleReset('playerTwo')}>
                 Reset
               </button>
             </PLayerPreview>}

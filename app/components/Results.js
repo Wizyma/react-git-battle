@@ -6,8 +6,7 @@ const Link = require('react-router-dom').Link;
 import PLayerPreview from './PLayerPreview';
 import Loading from './Loading';
 
-function Profile(props){
-  let info = props.info;
+function Profile({ info }){
   return(
     <PLayerPreview avatar={info.avatar_url} username={info.login}>
       <ul className='space-list-items'>
@@ -23,12 +22,12 @@ function Profile(props){
   )
 }
 
-function Player(props){
+function Player({ label, score, profile }){
   return(
     <div>
-      <h1 className='header'>{props.label}</h1>
-      <h3 style={{textAlign: 'center'}}>Score: {props.score}</h3>
-      <Profile info={props.profile}/>
+      <h1 className='header'>{label}</h1>
+      <h3 style={{textAlign: 'center'}}>Score: {score}</h3>
+      <Profile info={profile}/>
     </div>
   );
 }
@@ -51,40 +50,20 @@ class Results extends React.Component{
     }
   }
 
-  componentDidMount(){
-    let players = queryString.parse(this.props.location.search);
-    // Instead of the variable self you can use the function bind()
-    // just a question of preference ^^
-    let self = this;
-    api.battle([
-      players.playerOneName,
-      players.playerTwoName
-    ]).then((results) => {
-      if(results === null){
-        self.setState(() => {
-          return{
-            error: 'Looks like there was an error. Check that both users exists on GitHub',
-            loading: false
-          }
-        });
-      }
+  async componentDidMount(){
+    const {playerOneName, playerTwoName } = queryString.parse(this.props.location.search);;
+    const players = await api.battle([
+      playerOneName,
+      playerTwoName
+    ]);
 
-      self.setState(() => {
-        return{
-          error: null,
-          winner: results[0],
-          loser: results[1],
-          loading: false
-        }
-      });
-    });
+    !players ? this.setState({ error: 'Looks like there was an error. Check that both users exists on GitHub', loading: false }) :
+    this.setState({ error: null, winner: players[0], loser: players[1], loading: false });
+
   }
 
   render(){
-    let error = this.state.error;
-    let winner = this.state.winner
-    let loser = this.state.loser;
-    let loading = this.state.loading;
+    const { error, winner, loser, loading } = this.state;
     let styles = {
       content: {
         backgroundColor: '#0a0a0a',
@@ -96,25 +75,17 @@ class Results extends React.Component{
       }
     }
 
-    if(loading){
-      return (
-        <Loading />
-      );
-    }
-
-    if(error){
-      return (
-        <div>
+    return(
+      <div>
+        {loading && <Loading />}
+        {error &&  <div>
           <div className='row'>
             {error}
           </div>
           <hr style={{borderColor: 'transparent'}} />
           <Link className='reset' to='/battle'>Reset</Link>
-        </div>
-      );
-    }
-    return(
-      <div>
+        </div>}
+        {!loading && !error && <div>
         <div className='row'>
           <Player
             label='Winner'
@@ -129,6 +100,7 @@ class Results extends React.Component{
           />
         </div>
         <Link style={styles.content} className='reset' to='/battle'>New Battle</Link>
+      </div>}
       </div>
     )
   }

@@ -1,9 +1,6 @@
 import React from 'react';
 import Popular from './Popular';
-import * as ReactRouter from 'react-router-dom';
-const Router = ReactRouter.BrowserRouter;
-const Route = ReactRouter.Route;
-const Switch = ReactRouter.Switch;
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Nav from './Nav';
 import Home from './Home';
 import Battle from './Battle';
